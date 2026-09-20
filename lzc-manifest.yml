@@ -1,0 +1,46 @@
+application:
+  subdomain: rikkahub
+  # 常驻：冷启动要跑状态装载 + 迁移链，每次打开都冷启体验太差
+  background_task: true
+  multi_instance: false
+  public_path:
+    - /
+  upstreams:
+    - location: /
+      backend: http://rikkahub:8080/
+  injects:
+    # 密码闸门是 SPA 内部组件（任意 /api/* 返回 401 时弹出），没有独立路由，
+    # 页面始终停在根路径；表单只有一个密码框、没有用户名，所以要开 allowPasswordOnly。
+    - id: login-autofill
+      when:
+        - /
+      do:
+        - src: builtin://simple-inject-password
+          params:
+            password: "{{ .U.login_password }}"
+            allowPasswordOnly: true
+            passwordSelector: "input[type='password']"
+
+services:
+  rikkahub:
+    # upstream: ghcr.io/yuh-g/rikkahub-desktop:v1.5.0
+    image: ghcr.1ms.run/yuh-g/rikkahub-desktop:v1.5.0
+    environment:
+      # 镜像基于 distroless，容器里没有 Docker 的 /.dockerenv 标记，
+      # 不显式声明的话应用会走「桌面形态」只监听 127.0.0.1，网关连不上。
+      - RIKKAHUB_CONTAINER=1
+      - RIKKAHUB_HOST=0.0.0.0
+      # 开启自带密码闸门；不设则应用完全无鉴权（里面存着 API Key 和全部会话）
+      - RIKKAHUB_PASSWORD={{ .U.login_password }}
+    binds:
+      # state.json、会话 SQLite（rikka_hub.db）、files/、skills/、字体、备份缓存
+      - /lzcapp/var/pc-data:/app/pc-data
+
+usage: |
+  打开应用即进入 Rikkahub 聊天界面。首次会弹出访问密码闸门，安装时设置的密码会自动填入。
+  到「设置 → 供应商」里填自己的模型服务商 API Key 后即可开始对话；本地模型可把 OpenAI 兼容
+  供应商指向同一网络内 Ollama / LM Studio / llama.cpp 的地址。
+  会话、设置、附件、Skills 全部保存在 /lzcapp/var/pc-data，卸载应用时默认保留。
+  容器内剪贴板与系统 TTS 不可用（无头环境），联网搜索、MCP、图像生成等功能正常。
+  注意：应用的 AI 联网抓取工具会在容器内直接访问模型给出的任意 URL，存在 SSRF 风险，
+  请只在你信任的模型与网络环境下使用。

@@ -1,0 +1,20 @@
+package: community.lazycat.app.rikkahub
+version: 1.5.0
+name: Rikkahub
+description: "Native multi-provider LLM chat client: OpenAI, Anthropic, Gemini and any OpenAI-compatible endpoint, with multimodal attachments, MCP tools, web search, memory and local backups."
+min_os_version: 1.5.0
+homepage: https://github.com/yuh-G/rikkahub-desktop
+author: yuh-G
+license: AGPL-3.0
+
+permissions:
+  required:
+    - net.internet
+
+locales:
+  zh:
+    name: "Rikkahub"
+    description: "多供应商 LLM 聊天客户端：OpenAI / Anthropic / Gemini 及任意 OpenAI 兼容接口，支持多模态附件、MCP 工具、联网搜索、记忆与本地备份。"
+  en:
+    name: "Rikkahub"
+    description: "Native multi-provider LLM chat client: OpenAI, Anthropic, Gemini and any OpenAI-compatible endpoint, with multimodal attachments, MCP tools, web search, memory and local backups."

@@ -1,0 +1,17 @@
+params:
+  - id: login_password
+    type: secret
+    name: "Access Password"
+    description: "Password for the built-in web access gate. Leave empty to run without authentication (not recommended: the app stores your API keys and conversations)"
+    default_value: "$random(len=20)"
+    optional: false
+
+locales:
+  zh:
+    login_password:
+      name: "访问密码"
+      description: "应用自带访问闸门的密码；留空则不启用鉴权（不推荐，应用内保存着 API Key 与全部会话）"
+  en:
+    login_password:
+      name: "Access Password"
+      description: "Password for the built-in web access gate. Leave empty to run without authentication (not recommended: the app stores your API keys and conversations)"

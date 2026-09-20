@@ -1,0 +1,41 @@
+version: 1
+
+project:
+  root: .
+  build_config: lzc-build.yml
+  package_file: package.yml
+  output: dist/application.lpk
+  target_arch: amd64
+
+update:
+  strategy: publish
+  allow_downgrade: false
+  version_source:
+    type: image
+    image: rikkahub
+
+build:
+  toolchains: []
+  run_buildscript: false
+
+images:
+  - id: rikkahub
+    target: service
+    service: rikkahub
+    source: ghcr.io/yuh-g/rikkahub-desktop
+    channel: stable
+    sort: semver
+    # 上游发布族是 vX.Y.Z；latest / main / v2.0.0-preview / worktree-* 不属于发布族
+    tag_regex: '^v?\d+\.\d+\.\d+$'
+    delivery:
+      mode: mirror
+      require_digest_match: true
+
+stores:
+  official:
+    enabled: false
+  private:
+    enabled: true
+    skip_if_version_exists: true
+    name: Rikkahub
+    summary: 多供应商 LLM 聊天客户端 —— OpenAI / Anthropic / Gemini 及任意 OpenAI 兼容接口，支持多模态附件、MCP 工具、联网搜索与本地备份。
